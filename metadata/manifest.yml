@@ -5,7 +5,7 @@ Version: "1.6.0"
 Versions: ["1.6.0"]
 Website: https://github.com/gsterjov/openshift-nginx-cart
 Cartridge-Version: 0.0.1
-Cartridge-Vendor: marek-obuchowicz
+Cartridge-Vendor: korekontrol
 Categories:
   - service
   - nginx
