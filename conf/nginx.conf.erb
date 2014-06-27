@@ -1,0 +1,50 @@
+error_log  <%= ENV['OPENSHIFT_NGINX_DIR'] %>logs/error.log;
+pid        <%= ENV['OPENSHIFT_NGINX_DIR'] %>run/nginx.pid;
+
+worker_processes  2;
+
+events {
+    worker_connections  1024;
+    multi_accept on;
+}
+
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    tcp_nopush on;
+    tcp_nodelay on;
+
+    client_body_temp_path  <%= ENV['OPENSHIFT_TMP_DIR'] %>client_temp;
+    proxy_temp_path        <%= ENV['OPENSHIFT_TMP_DIR'] %>proxy_temp;
+    fastcgi_temp_path      <%= ENV['OPENSHIFT_TMP_DIR'] %>fastcgi_temp;
+    uwsgi_temp_path        <%= ENV['OPENSHIFT_TMP_DIR'] %>uwsgi_temp;
+    scgi_temp_path         <%= ENV['OPENSHIFT_TMP_DIR'] %>scgi_temp;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  <%= ENV['OPENSHIFT_NGINX_DIR'] %>logs/access.log  main;
+
+    open_file_cache           max=1000 inactive=2h;
+    open_file_cache_errors    on;
+    open_file_cache_min_uses  1;
+    open_file_cache_valid     1h;
+
+    sendfile  on;
+
+    gzip      on;
+    gzip_disable "msie6";
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_buffers 16 8k;
+    gzip_http_version 1.1;
+    gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/javascript application/font-woff;
+
+    keepalive_timeout  65;
+
+    include  <%= ENV['OPENSHIFT_REPO_DIR'] %>nginx.conf;
+}
